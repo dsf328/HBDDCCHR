@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO SOMWIPA 🐱 </title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="fireworksCanvas"></canvas> <!-- เพิ่ม canvas สำหรับพลุ -->
+    <div class="container">
+        <h1>TO SOMWIPA 🐱 </h1>
+        <!-- ปุ่มไปยังหน้า birthday -->
+        <button onclick="goToBirthday()">NEXT</button>
+    </div>
+
+    <!-- อิโมจิแมว -->
+    <span id="cat" class="cat-emoji">🐱</span>
+
+    <script>
+        function goToBirthday() {
+            window.location.href = 'birthday.html';  // เปลี่ยนเป็น URL ของหน้า birthday
+        }
+
+        // ฟังก์ชั่นสำหรับพลุ
+        const canvas = document.getElementById("fireworksCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // ตั้งค่าขนาดของ canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // ฟังก์ชั่นเพื่อเลือกสีจากรุ้ง
+        function getRainbowColor() {
+            const colors = [
+                "#FF0000", // Red
+                "#FF7F00", // Orange
+                "#FFFF00", // Yellow
+                "#00FF00", // Green
+                "#0000FF", // Blue
+                "#4B0082", // Indigo
+                "#8B00FF"  // Violet
+            ];
+            return colors[Math.floor(Math.random() * colors.length)]; // เลือกสีสุ่ม
+        }
+
+        // ฟังก์ชั่นพลุ
+        function createFirework(x, y) {
+            let particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    speed: Math.random() * 4 + 2, // ปรับความเร็ว
+                    direction: Math.random() * 2 * Math.PI,
+                    radius: Math.random() * 3 + 1, // ขนาดอนุภาค
+                    color: getRainbowColor() // ใช้สีรุ้ง
+                });
+            }
+            return particles;
+        }
+
+        // ฟังก์ชั่นเพื่อเคลื่อนที่ของพลุ
+        function animateFireworks(particles) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.x += p.speed * Math.cos(p.direction);
+                p.y += p.speed * Math.sin(p.direction);
+                p.radius *= 0.98; // ทำให้อนุภาคค่อยๆ เล็กลง
+
+                // วาดพลุ
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+        }
+
+        // ฟังก์ชั่นสำหรับ animation
+        let fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+
+        // ฟังก์ชั่นการสร้างพลุใหม่ทุกๆ ครั้ง
+        function update() {
+            if (Math.random() < 0.05) { // สร้างพลุใหม่ 5% ของเวลา
+                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+            }
+            animateFireworks(fireworks);
+            requestAnimationFrame(update);
+        }
+
+        update(); // เริ่มต้น animation
+
+        // อิโมจิแมววิ่งผ่านหน้าจอ
+        const cat = document.getElementById("cat");
+        let catX = -100; // เริ่มต้นแมวจากซ้ายสุด
+
+        function moveCat() {
+            catX += 2; // เคลื่อนที่ 2px ต่อ frame
+            if (catX > window.innerWidth) { // ถ้าผ่านหน้าจอไปแล้ว ให้นำแมวกลับมาเริ่มใหม่
+                catX = -100;
+            }
+            cat.style.left = catX + 'px'; // เคลื่อนที่แมว
+            requestAnimationFrame(moveCat); // ทำการเคลื่อนที่ต่อเนื่อง
+        }
+
+        moveCat(); // เริ่มต้นการเคลื่อนที่ของแมว
+    </script>
+</body>
+</html>
